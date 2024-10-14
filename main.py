@@ -9,10 +9,26 @@ authentication_wait_event = threading.Condition()
 
 
 def connection_handler(jmp_connection2, connected, socket):
+    """
+    called when the connection is either connected or disconnected
+
+    :param jmp_connection2:
+    :param connected:
+    :param socket:
+    :return:
+    """
     print(f"jmp_connection: {jmp_connection2}, {socket} is connected: {connected}")
 
 
 def auth_handler(jmp_connection2, authorized, nonce=None):
+    """
+    called when we either receive an authenticated or unauthenticated message
+
+    :param jmp_connection2:
+    :param authorized:
+    :param nonce:
+    :return:
+    """
     print(f"jmp_connection: {jmp_connection2}, authorized: {authorized}, nonce: {nonce}")
 
     if not authorized:
@@ -28,6 +44,13 @@ def auth_handler(jmp_connection2, authorized, nonce=None):
 
 
 def message_handler(jmp_connection2, jnior_message):
+    """
+    called when the jmp connection receives a message
+
+    :param jmp_connection2:
+    :param jnior_message:
+    :return:
+    """
     print(f"jmp_connection: {jmp_connection2}, recv message: {jnior_message.to_json()}")
 
 
