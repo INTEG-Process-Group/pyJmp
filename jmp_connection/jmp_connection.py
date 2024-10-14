@@ -135,6 +135,12 @@ class JMPConnection(JniorConnection):
         """
         return self.socket is not None
 
+    def is_authenticated(self):
+        """
+        :return: whether the connection is authenticated
+        """
+        return self.authenticated
+
     def _message_receive_loop(self):
         """
         private method used to monitor the socket for incoming messages
