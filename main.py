@@ -13,7 +13,10 @@ def connection_handler(jmp_connection2, connected, socket):
     :param socket:
     :return:
     """
-    print(f"jmp_connection: {jmp_connection2}, {socket} is connected: {connected}")
+    if connected:
+        print(f"{jmp_connection2}: is now connected to {socket}")
+    else:
+        print(f"{jmp_connection2}: has disconnected")
 
 
 def auth_handler(jmp_connection2, authorized, nonce=None):
@@ -72,6 +75,9 @@ print(f"is authenticated: {jmp_connection.is_authenticated()}")
 #
 # try to close pulse as a test
 jmp_connection.send(CloseMessage(1, 1000))
+
+#
+# try sending a macro execution request
 jmp_connection.send(PostMessage(2000, {"Message": "macro.execute", "MacroName": "1"}))
 
 time.sleep(5)
