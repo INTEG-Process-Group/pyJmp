@@ -10,7 +10,8 @@ import time
 import traceback
 
 from jmp_connection.data_input_stream import DataInputStream
-from jmp_connection.jnior_connection import JniorConnection
+from jmp_connection.connection_base import JniorConnection
+from jmp_connection.jnior_messages import JniorMessage, LoginMessage
 from jmp_connection.socket_input_stream import SocketInputStream
 # from jmp_connection.console_session import ConsoleSession
 
@@ -260,3 +261,49 @@ class JMPConnection(JniorConnection):
             console_session = ConsoleSession(self)
             self.console_session = console_session if console_session.open() else None
         return self.console_session
+
+    def message_received(self, message):
+        """
+        Called when a message was received.
+        """
+
+        # get the json object from the message
+        json_obj = json.loads(message)
+
+        # create a MonitorMessage object
+        jnior_message = JniorMessage()
+        jnior_message.from_json(json_obj)
+
+        if "Error" == jnior_message.message:
+            if "Unauthorized" in json_obj['Text']:
+
+                if not self.attempted_credentials:
+                    self.send(LoginMessage(self.username, self.password, json_obj['Nonce']))
+                    self.attempted_credentials = True
+
+                else:
+                    self.on_auth(self, authorized=False, nonce=json_obj['Nonce'])
+
+        elif "Authenticated" == jnior_message.message:
+            #
+            # now we are ready to use the logged in connection.  see if we have an authentication_wait_event to notify
+            if self.authentication_wait_event and self.authentication_wait_event is not None:
+                self.authentication_wait_event.acquire()
+                self.authentication_wait_event.notify()
+                self.authentication_wait_event.release()
+
+            if not self.authenticated:
+                self.authenticated = True
+                # alert the on_auth handlers and let them know that the connection has
+                # successfully been authenticated
+                self.on_auth(self, authorized=True)
+
+        else:
+            if not self.authenticated:
+                self.authenticated = True
+                # alert the on_auth handlers and let them know that the connection has
+                # successfully been authenticated
+                self.on_auth(self, authorized=True)
+
+            # alert the on_message handlers
+            self.on_message(self, jnior_message=jnior_message)
