@@ -1,7 +1,7 @@
 import time
 
 from jmp_connection.jmp_connection import JMPConnection
-from jmp_connection.jnior_messages import LoginMessage, CloseMessage
+from jmp_connection.jnior_messages import LoginMessage, CloseMessage, PostMessage
 
 
 def connection_handler(jmp_connection2, connected, socket):
@@ -72,6 +72,7 @@ print(f"is authenticated: {jmp_connection.is_authenticated()}")
 #
 # try to close pulse as a test
 jmp_connection.send(CloseMessage(1, 1000))
+jmp_connection.send(PostMessage(2000, {"Message": "macro.execute", "MacroName": "1"}))
 
 time.sleep(5)
 

@@ -1,5 +1,6 @@
 import copy
 import hashlib
+import json
 import uuid
 
 
@@ -182,3 +183,10 @@ class RegistryResponseMessage(JniorMessage):
     @property
     def keys(self):
         return self.json["Keys"]
+
+
+class PostMessage(JniorMessage):
+    def __init__(self, number, content_json):
+        JniorMessage.__init__(self, "Post Message")
+        self.json["Number"] = number
+        self.json["Content"] = json.dumps(content_json)
