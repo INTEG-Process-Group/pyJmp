@@ -51,11 +51,22 @@ def message_handler(jmp_connection2, jnior_message):
     print(f"jmp_connection: {jmp_connection2}, recv message: {jnior_message.to_json()}")
 
 
+#
+# define the JMP connection object
 jmp_connection = JMPConnection()
-jmp_connection.set_credentials("jnior", "jnior")
+
+#
+# these handlers are optional and only specified for example purposes
 jmp_connection.add_connection_handler(connection_handler)
-# jmp_connection.add_auth_handler(auth_handler)
+jmp_connection.add_auth_handler(auth_handler)
 jmp_connection.add_message_handler(message_handler)
+
+#
+# set the credentials to use.  if they fail then the auth_handler, if one is defined, would be called.
+jmp_connection.set_credentials("jnior", "jnior2")
+
+#
+# connect to the JMP server
 jmp_connection.connect("10.0.0.78", 9220)
 
 #
