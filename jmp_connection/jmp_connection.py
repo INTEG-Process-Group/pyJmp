@@ -141,6 +141,21 @@ class JMPConnection(JniorConnection):
         """
         return self.authenticated
 
+    def set_credentials(self, username, password):
+        self.username = username
+        self.password = password
+        self.attempted_credentials = False
+
+    def wait_for_authentication(self):
+        """
+        sends the login and waits for the login to be processed
+
+        :return:
+        """
+        self.authentication_wait_event.acquire()
+        self.authentication_wait_event.wait(1000)
+        self.authentication_wait_event.release()
+
     def _message_receive_loop(self):
         """
         private method used to monitor the socket for incoming messages

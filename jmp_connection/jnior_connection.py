@@ -3,7 +3,7 @@ import threading
 from datetime import datetime
 
 from jmp_connection.jnior_listeners import JniorEvent
-from jmp_connection.jnior_messages import JniorMessage
+from jmp_connection.jnior_messages import JniorMessage, LoginMessage
 
 
 class JniorConnection:
@@ -20,8 +20,11 @@ class JniorConnection:
         # overriding class
         self.port = 0
 
-        self.username = "jnior"
-        self.password = "jnior"
+        self.username = None
+        self.password = None
+        self.attempted_credentials = False
+
+        self.authentication_wait_event = threading.Condition()
         self.authenticated = False
 
         # Jnior Events
@@ -104,9 +107,22 @@ class JniorConnection:
 
         if "Error" == jnior_message.message:
             if "Unauthorized" in json_obj['Text']:
-                self.on_auth(self, authorized=False, nonce=json_obj['Nonce'])
+
+                if not self.attempted_credentials:
+                    self.send(LoginMessage(self.username, self.password, json_obj['Nonce']))
+                    self.attempted_credentials = True
+
+                else:
+                    self.on_auth(self, authorized=False, nonce=json_obj['Nonce'])
 
         elif "Authenticated" == jnior_message.message:
+            #
+            # now we are ready to use the logged in connection.  see if we have an authentication_wait_event to notify
+            if self.authentication_wait_event and self.authentication_wait_event is not None:
+                self.authentication_wait_event.acquire()
+                self.authentication_wait_event.notify()
+                self.authentication_wait_event.release()
+
             if not self.authenticated:
                 self.authenticated = True
                 # alert the on_auth handlers and let them know that the connection has
