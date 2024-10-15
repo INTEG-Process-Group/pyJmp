@@ -89,7 +89,7 @@ jmp_connection.send(CloseMessage(1, 1000))
 
 #
 # try sending a macro execution request
-jmp_connection.send(PostMessage(2000, {"Message": "macro.execute", "MacroName": "1"}))
+jmp_connection.send(PostMessage(2000, {"Message": "macro.execute", "MacroName": "open_shutter"}))
 
 time.sleep(5)
 
