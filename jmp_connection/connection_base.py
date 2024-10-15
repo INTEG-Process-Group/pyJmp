@@ -41,37 +41,37 @@ class JniorConnection:
     """
     def add_connection_handler(self, connection_event_handler):
         """
-        adds a given message event handler to the on_connection JniorEvent object
+        adds a given event handler to the on_connection JniorEvent object
         """
         self.on_connection += connection_event_handler
 
     def remove_connection_handler(self, connection_event_handler):
         """
-        removes a given message event handler to the on_connection JniorEvent object
+        removes a given event handler to the on_connection JniorEvent object
         """
         self.on_connection -= connection_event_handler
 
     def add_auth_handler(self, auth_event_handler):
         """
-        adds a given message event handler to the on_auth JniorEvent object
+        adds a given event handler to the on_auth JniorEvent object
         """
         self.on_auth += auth_event_handler
 
     def remove_auth_handler(self, auth_event_handler):
         """
-        removes a given message event handler to the on_auth JniorEvent object
+        removes a given event handler to the on_auth JniorEvent object
         """
         self.on_auth -= auth_event_handler
 
     def add_message_handler(self, message_event_handler):
         """
-        adds a given message event handler to the on_message JniorEvent object
+        adds a given event handler to the on_message JniorEvent object
         """
         self.on_message += message_event_handler
 
     def remove_message_handler(self, message_event_handler):
         """
-        removed a given message event handler to the on_message JniorEvent object
+        removed a given event handler to the on_message JniorEvent object
         """
         self.on_message -= message_event_handler
 
