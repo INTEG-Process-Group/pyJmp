@@ -4,7 +4,7 @@ import json
 import uuid
 
 
-class JniorMessage(object):
+class JmpMessage(object):
     EMPTY = {}
 
     def __init__(self, message=None):
@@ -34,9 +34,9 @@ class JniorMessage(object):
         return self.json
 
 
-class LoginMessage(JniorMessage):
+class LoginMessage(JmpMessage):
     def __init__(self, username, password, nonce):
-        JniorMessage.__init__(self)
+        JmpMessage.__init__(self)
 
         md5_hash = hashlib.md5(bytes(f"{username}:{nonce}:{password}", 'utf'))
         digest = str(md5_hash.hexdigest())
@@ -49,9 +49,9 @@ class LoginMessage(JniorMessage):
         return self.json["Auth-Digest"]
 
 
-class MonitorMessage(JniorMessage):
+class MonitorMessage(JmpMessage):
     def __init__(self):
-        JniorMessage.__init__(self)
+        JmpMessage.__init__(self)
 
     @property
     def model(self):
@@ -78,9 +78,9 @@ class MonitorMessage(JniorMessage):
         return self.json["Timestamp"]
 
 
-class ControlOutputMessage(JniorMessage):
+class ControlOutputMessage(JmpMessage):
     def __init__(self, command, channel):
-        JniorMessage.__init__(self, "Control")
+        JmpMessage.__init__(self, "Control")
         self.json["Command"] = command
         self.json["Channel"] = channel
 
@@ -92,15 +92,15 @@ class CloseMessage(ControlOutputMessage):
             self.json["Duration"] = duration
 
 
-class FileListMessage(JniorMessage):
+class FileListMessage(JmpMessage):
     def __init__(self, folder="/"):
-        JniorMessage.__init__(self, "File List")
+        JmpMessage.__init__(self, "File List")
         self.json["Folder"] = folder
 
 
-class FileListResponseMessage(JniorMessage):
+class FileListResponseMessage(JmpMessage):
     def __init__(self):
-        JniorMessage.__init__(self)
+        JmpMessage.__init__(self)
 
     @property
     def folder(self):
@@ -117,9 +117,9 @@ class FileListResponseMessage(JniorMessage):
         return self.json["Content"]
 
 
-class FileReadMessage(JniorMessage):
+class FileReadMessage(JmpMessage):
     def __init__(self, filename, offset=None, limit=1024*16):
-        JniorMessage.__init__(self, "File Read")
+        JmpMessage.__init__(self, "File Read")
 
         if not filename.startswith("/"):
             filename = f"/{filename}"
@@ -129,9 +129,9 @@ class FileReadMessage(JniorMessage):
             self.json["Offset"] = offset
 
 
-class FileReadResponseMessage(JniorMessage):
+class FileReadResponseMessage(JmpMessage):
     def __init__(self):
-        JniorMessage.__init__(self)
+        JmpMessage.__init__(self)
 
     @property
     def file(self):
@@ -170,23 +170,23 @@ class FileReadResponseMessage(JniorMessage):
         return self.json["Offset"] if "Offset" in self.json else None
 
 
-class RegistryReadMessage(JniorMessage):
+class RegistryReadMessage(JmpMessage):
     def __init__(self, keys=[]):
-        JniorMessage.__init__(self, "Registry Read")
+        JmpMessage.__init__(self, "Registry Read")
         self.json["Keys"] = keys
 
 
-class RegistryResponseMessage(JniorMessage):
+class RegistryResponseMessage(JmpMessage):
     def __init__(self):
-        JniorMessage.__init__(self)
+        JmpMessage.__init__(self)
 
     @property
     def keys(self):
         return self.json["Keys"]
 
 
-class PostMessage(JniorMessage):
+class PostMessage(JmpMessage):
     def __init__(self, number, content_json):
-        JniorMessage.__init__(self, "Post Message")
+        JmpMessage.__init__(self, "Post Message")
         self.json["Number"] = number
         self.json["Content"] = json.dumps(content_json)

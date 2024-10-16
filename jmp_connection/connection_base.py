@@ -1,7 +1,7 @@
 import threading
 
-from jmp_connection.jnior_listeners import JniorEvent
-from jmp_connection.jnior_messages import JniorMessage
+from jmp_connection.jnior_event import JniorEvent
+from jmp_connection.jmp_messages import JmpMessage
 
 
 class JniorConnection:
@@ -89,4 +89,4 @@ class JniorConnection:
 
         # send an empty message so that we get an error - unauthenticated response with a
         # Nonce to use in our login message
-        self.send(JniorMessage())
+        self.send(JmpMessage())

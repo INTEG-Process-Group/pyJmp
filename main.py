@@ -1,7 +1,7 @@
 import time
 
 from jmp_connection.jmp_connection import JMPConnection
-from jmp_connection.jnior_messages import LoginMessage, CloseMessage, PostMessage
+from jmp_connection.jmp_messages import LoginMessage, CloseMessage, PostMessage
 
 
 def connection_handler(jmp_connection2, connected, socket):

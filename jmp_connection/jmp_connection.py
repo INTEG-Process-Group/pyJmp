@@ -11,7 +11,7 @@ import traceback
 
 from jmp_connection.data_input_stream import DataInputStream
 from jmp_connection.connection_base import JniorConnection
-from jmp_connection.jnior_messages import JniorMessage, LoginMessage
+from jmp_connection.jmp_messages import JmpMessage, LoginMessage
 from jmp_connection.socket_input_stream import SocketInputStream
 # from jmp_connection.console_session import ConsoleSession
 
@@ -271,7 +271,7 @@ class JMPConnection(JniorConnection):
         json_obj = json.loads(message)
 
         # create a MonitorMessage object
-        jnior_message = JniorMessage()
+        jnior_message = JmpMessage()
         jnior_message.from_json(json_obj)
 
         if "Error" == jnior_message.message:
