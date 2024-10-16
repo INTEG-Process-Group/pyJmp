@@ -40,15 +40,15 @@ def auth_handler(jmp_connection2, authorized, nonce=None):
         pass
 
 
-def message_handler(jmp_connection2, jnior_message):
+def message_handler(jmp_connection2, jmp_message):
     """
     called when the jmp connection receives a message
 
     :param jmp_connection2:
-    :param jnior_message:
+    :param jmp_message:
     :return:
     """
-    print(f"jmp_connection: {jmp_connection2}, recv message: {jnior_message.to_json()}")
+    print(f"jmp_connection: {jmp_connection2.get_host_info()}, recv message: {jmp_message.to_json()}")
 
 
 #

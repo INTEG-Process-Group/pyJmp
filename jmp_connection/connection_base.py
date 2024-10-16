@@ -4,7 +4,7 @@ from jmp_connection.jnior_event import JniorEvent
 from jmp_connection.jmp_messages import JmpMessage
 
 
-class JniorConnection:
+class ConnectionBase:
     def __init__(self):
         """
         A base class for JNIOR connections.  This can be overriden by class implementations like a

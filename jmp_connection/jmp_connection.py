@@ -10,7 +10,7 @@ import time
 import traceback
 
 from jmp_connection.data_input_stream import DataInputStream
-from jmp_connection.connection_base import JniorConnection
+from jmp_connection.connection_base import ConnectionBase
 from jmp_connection.jmp_messages import JmpMessage, LoginMessage
 from jmp_connection.socket_input_stream import SocketInputStream
 # from jmp_connection.console_session import ConsoleSession
@@ -20,7 +20,7 @@ Handles a JMP connection
 """
 
 
-class JMPConnection(JniorConnection):
+class JMPConnection(ConnectionBase):
 
     def __init__(self):
         """
@@ -30,7 +30,7 @@ class JMPConnection(JniorConnection):
         JMP connection.  This is most likely the case when implementing a server where accepted
         clients will now act as a JMP client.
         """
-        JniorConnection.__init__(self)
+        ConnectionBase.__init__(self)
 
         self.port = 9220  # default
 
@@ -233,10 +233,12 @@ class JMPConnection(JniorConnection):
         json_obj = json.loads(message)
 
         # create a MonitorMessage object
-        jnior_message = JmpMessage()
-        jnior_message.from_json(json_obj)
+        jmp_message = JmpMessage()
+        jmp_message.from_json(json_obj)
 
-        if "Error" == jnior_message.message:
+        print(f"jmp_connection: {self.get_host_info()}, recv message: {jmp_message.to_json()}")
+
+        if "Error" == jmp_message.message:
             if "Unauthorized" in json_obj['Text']:
 
                 if not self.attempted_credentials:
@@ -246,7 +248,7 @@ class JMPConnection(JniorConnection):
                 else:
                     self.on_auth(self, authorized=False, nonce=json_obj['Nonce'])
 
-        elif "Authenticated" == jnior_message.message:
+        elif "Authenticated" == jmp_message.message:
             #
             # now we are ready to use the logged in connection.  see if we have an authentication_wait_event to notify
             if self.authentication_wait_event and self.authentication_wait_event is not None:
@@ -268,31 +270,31 @@ class JMPConnection(JniorConnection):
                 self.on_auth(self, authorized=True)
 
             # alert the on_message handlers
-            self.on_message(self, jnior_message=jnior_message)
+            self.on_message(self, jmp_message=jmp_message)
 
-    def send(self, jnior_message) -> None:
+    def send(self, jmp_message) -> None:
         """
         Used to send the JNIOR message object
 
-        :param jnior_message:
+        :param jmp_message:
         :return: None
         """
         try:
             # get the json object as a string
-            jnior_message_json_string = json.dumps(jnior_message.to_json())
+            jmp_message_json_string = json.dumps(jmp_message.to_json())
 
             # format the message in the JMP format [length, message]
-            jmp_formatted_string = f"[{len(jnior_message_json_string)},{jnior_message_json_string}]"
+            jmp_formatted_string = f"[{len(jmp_message_json_string)},{jmp_message_json_string}]"
 
             if self.socket is None:
                 raise Exception("socket is not open")
 
             # send to our connection
             self.socket.send(bytes(jmp_formatted_string, 'utf-8'))
-            print(f"{str(datetime.now())[:-3]}:     sent: {jnior_message_json_string}")
+            print(f"{str(datetime.now())[:-3]}:     sent: {jmp_message_json_string}")
         except Exception as err:
             print(f"{str(datetime.now())[:-3]}: "
-                  f"unable to send {jnior_message} to {self.host}:{self.port} because {err}\n"
+                  f"unable to send {jmp_message} to {self.host}:{self.port} because {err}\n"
                   f"{traceback.format_exc()}")
             # close and nullify our socket
             self.close()
