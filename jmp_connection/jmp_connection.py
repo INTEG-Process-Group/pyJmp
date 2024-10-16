@@ -16,7 +16,8 @@ from jmp_connection.socket_input_stream import SocketInputStream
 # from jmp_connection.console_session import ConsoleSession
 
 """
-Handles a JMP connection
+Handles a JMP connection.  The JMP "JuMP" protocol is a JSON based protocol that is meant to replace the binary
+JNIOR protocol.
 """
 
 
@@ -66,6 +67,9 @@ class JMPConnection(ConnectionBase):
         tls_elapsed = time.time() - tls_start_time
         print(f"{str(datetime.now())[:-3]}: upgrading socket to TLS took {tls_elapsed}")
 
+    """
+    Authentication Methods
+    """
     def is_authenticated(self):
         """
         :return: whether the connection is authenticated

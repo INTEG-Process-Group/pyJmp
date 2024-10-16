@@ -1,5 +1,6 @@
 import threading
 import traceback
+from abc import abstractmethod, ABC
 from datetime import datetime
 import socket
 
@@ -7,7 +8,7 @@ from jmp_connection.jnior_event import JniorEvent
 from jmp_connection.jmp_messages import JmpMessage
 
 
-class ConnectionBase:
+class ConnectionBase(ABC):
     def __init__(self):
         """
         A base class for JNIOR connections.  This can be overriden by class implementations like a
@@ -164,3 +165,11 @@ class ConnectionBase:
         # send an empty message so that we get an error - unauthenticated response with a
         # Nonce to use in our login message
         self.send(JmpMessage())
+
+    @abstractmethod
+    def _message_receive_loop(self):
+        pass
+
+    @abstractmethod
+    def _message_received(self):
+        pass
