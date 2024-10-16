@@ -270,7 +270,7 @@ class JMPConnection(ConnectionBase):
                 self.on_auth(self, authorized=True)
 
             # alert the on_message handlers
-            self.on_message(self, jmp_message=jmp_message)
+            self.on_message_recv(self, jmp_message=jmp_message)
 
     def send(self, jmp_message) -> None:
         """

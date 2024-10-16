@@ -28,7 +28,7 @@ class ConnectionBase:
         # Jnior Events
         self.on_connection = JniorEvent()
         self.on_auth = JniorEvent()
-        self.on_message = JniorEvent()
+        self.on_message_recv = JniorEvent()
 
     def get_host_info(self):
         """
@@ -63,17 +63,17 @@ class ConnectionBase:
         """
         self.on_auth -= auth_event_handler
 
-    def add_message_handler(self, message_event_handler):
+    def add_message_recv_handler(self, message_event_handler):
         """
         adds a given event handler to the on_message JniorEvent object
         """
-        self.on_message += message_event_handler
+        self.on_message_recv += message_event_handler
 
-    def remove_message_handler(self, message_event_handler):
+    def remove_message_recv_handler(self, message_event_handler):
         """
         removed a given event handler to the on_message JniorEvent object
         """
-        self.on_message -= message_event_handler
+        self.on_message_recv -= message_event_handler
 
     def connected(self):
         """

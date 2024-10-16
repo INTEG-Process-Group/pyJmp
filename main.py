@@ -40,7 +40,7 @@ def auth_handler(jmp_connection2, authorized, nonce=None):
         pass
 
 
-def message_handler(jmp_connection2, jmp_message):
+def message_recv_handler(jmp_connection2, jmp_message):
     """
     called when the jmp connection receives a message
 
@@ -48,7 +48,7 @@ def message_handler(jmp_connection2, jmp_message):
     :param jmp_message:
     :return:
     """
-    print(f"jmp_connection: {jmp_connection2.get_host_info()}, recv message: {jmp_message.to_json()}")
+    print(f"jmp_connection: {jmp_connection2.get_host_info()} received {jmp_message.to_json()}")
 
 
 #
@@ -59,7 +59,7 @@ jmp_connection = JMPConnection()
 # these handlers are optional and only specified for example purposes
 jmp_connection.add_connection_handler(connection_handler)
 jmp_connection.add_auth_handler(auth_handler)
-jmp_connection.add_message_handler(message_handler)
+jmp_connection.add_message_recv_handler(message_recv_handler)
 
 #
 # set the credentials to use.  if they fail then the auth_handler, if one is defined, would be called.
