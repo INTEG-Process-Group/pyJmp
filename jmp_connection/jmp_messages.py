@@ -8,16 +8,22 @@ class JmpMessage(object):
     EMPTY = {}
 
     def __init__(self, message=None):
-        self.json = {}
-        if message is not None:
-            self.json["Message"] = message
-            self.json["Meta"] = {"Hash": str(uuid.uuid4())[:8]}
-        else:
-            self.json["Message"] = ""
+        if message is None:
+            message = ""
 
-    def dup(self, jnior_message):
-        if jnior_message is not None:
-            self.json = copy.copy(jnior_message.json)
+        self.json = {
+            "Message": message,
+            "Meta": {"Hash": str(uuid.uuid4())[:8]}
+        }
+
+    def dup(self, jmp_message):
+        """
+        used internally to duplicate the given jmp_message object
+        :param jmp_message:
+        :return:
+        """
+        if jmp_message is not None:
+            self.json = copy.copy(jmp_message.json)
 
     @property
     def message(self):
