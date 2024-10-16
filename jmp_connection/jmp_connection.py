@@ -209,7 +209,7 @@ class JMPConnection(JniorConnection):
                     message = str(message_bytes, 'ascii')
 
                     # kick a new thread to handle the received message
-                    c_thread = threading.Thread(target=self.message_received, args=[message], daemon=True)
+                    c_thread = threading.Thread(target=self._message_received, args=[message], daemon=True)
                     c_thread.start()
 
             except Exception as err:
@@ -224,45 +224,7 @@ class JMPConnection(JniorConnection):
                 # alert listener handlers that we have lost our connection
                 self.on_connection(self, connected=False)
 
-    def send(self, jnior_message) -> None:
-        """
-        Used to send the JNIOR message object
-
-        :param jnior_message:
-        :return: None
-        """
-        try:
-            # get the json object as a string
-            jnior_message_json_string = json.dumps(jnior_message.to_json())
-
-            # format the message in the JMP format [length, message]
-            jmp_formatted_string = f"[{len(jnior_message_json_string)},{jnior_message_json_string}]"
-
-            if self.socket is None:
-                raise Exception("socket is not open")
-
-            # send to our connection
-            self.socket.send(bytes(jmp_formatted_string, 'utf-8'))
-            print(f"{str(datetime.now())[:-3]}:     sent: {jnior_message_json_string}")
-        except Exception as err:
-            print(f"{str(datetime.now())[:-3]}: "
-                  f"unable to send {jnior_message} to {self.host}:{self.port} because {err}\n"
-                  f"{traceback.format_exc()}")
-            # close and nullify our socket
-            self.close()
-            # alert listener handlers that we have lost our connection
-            self.on_connection(self, connected=False)
-
-    def get_console_session(self):
-        """
-        :return: a console session.  if one has not yet been established then one will be created now
-        """
-        if self.console_session is None:
-            console_session = ConsoleSession(self)
-            self.console_session = console_session if console_session.open() else None
-        return self.console_session
-
-    def message_received(self, message):
+    def _message_received(self, message):
         """
         Called when a message was received.
         """
@@ -307,3 +269,41 @@ class JMPConnection(JniorConnection):
 
             # alert the on_message handlers
             self.on_message(self, jnior_message=jnior_message)
+
+    def send(self, jnior_message) -> None:
+        """
+        Used to send the JNIOR message object
+
+        :param jnior_message:
+        :return: None
+        """
+        try:
+            # get the json object as a string
+            jnior_message_json_string = json.dumps(jnior_message.to_json())
+
+            # format the message in the JMP format [length, message]
+            jmp_formatted_string = f"[{len(jnior_message_json_string)},{jnior_message_json_string}]"
+
+            if self.socket is None:
+                raise Exception("socket is not open")
+
+            # send to our connection
+            self.socket.send(bytes(jmp_formatted_string, 'utf-8'))
+            print(f"{str(datetime.now())[:-3]}:     sent: {jnior_message_json_string}")
+        except Exception as err:
+            print(f"{str(datetime.now())[:-3]}: "
+                  f"unable to send {jnior_message} to {self.host}:{self.port} because {err}\n"
+                  f"{traceback.format_exc()}")
+            # close and nullify our socket
+            self.close()
+            # alert listener handlers that we have lost our connection
+            self.on_connection(self, connected=False)
+
+    def get_console_session(self):
+        """
+        :return: a console session.  if one has not yet been established then one will be created now
+        """
+        if self.console_session is None:
+            console_session = ConsoleSession(self)
+            self.console_session = console_session if console_session.open() else None
+        return self.console_session
